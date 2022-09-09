@@ -39,17 +39,31 @@ function onGalleryContainerClick(evt) {
 
     openModalWindow(chosenImg)
 
-    onEscKey(chosenImg);
 }
 
-function openModalWindow(picture){
+function openModalWindow(picture) {
     const instance = basicLightbox.create(`
-        <img src=${picture}>
-    `)
+            <img src=${picture}>
+        `, {
+            onShow: (instance) => {
+                window.addEventListener('keydown', escClose)
+            },
+        
+            onClose: (instance) => {
+                window.removeEventListener('keydown', escClose)
+            }
+        }
+    );
+    
     instance.show()
     
-    // onShow: (instance) => {}
-}
+    function escClose(evt) {
+        const isEscape = evt.code === 'Escape';
 
+        if (isEscape) {
+            instance.close();
+        }
+    }
+}
 
 console.log(galleryItems);
